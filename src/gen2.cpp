@@ -57,6 +57,7 @@ int main(void) {
 //			  int fieldTypes[numberOfColumns];
 			  idx = 0;
 			  numberOfColumns = 0;
+			  int columnTypes[numberOfColumns];
 			  for (s=&buffer[0]; *s != '\0'; s++) {
 				  idx++;
 				  printf("%c\n", *s);
@@ -73,6 +74,12 @@ int main(void) {
 					  idx=0;
 				  }
 			  }
+
+			  // Trim the value strings and
+			  // populate columnTypes
+			  //
+			  //
+
 
 			  // We have all the headings stored in
 			  // char arrays, time to create the table
@@ -119,6 +126,8 @@ int main(void) {
 				  printf("Checking if numeric..\n");
 				  printf("\n\n");
 				  int text = 0;
+
+				  // Test against columnTypes, not headings
 				  for (int ii = 0; ii < strlen(trimmed); ii++) {
 					  if (!isdigit(trimmed[ii])) {
 						  text = 1;
