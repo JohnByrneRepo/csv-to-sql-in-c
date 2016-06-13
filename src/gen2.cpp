@@ -60,26 +60,78 @@ int main(void) {
 			  int columnTypes[numberOfColumns];
 			  for (s=&buffer[0]; *s != '\0'; s++) {
 				  idx++;
-				  printf("%c\n", *s);
+//				  printf("%c\n", *s);
 				  if(!strchr(delimiter, *s)) {
 					  values[numberOfColumns][idx] = *s;
+					  printf("%c\n", *s);
 				  } else {
 					  printf("comma found\n");
 					  printf("value %i:", numberOfColumns + 1);
 					  for (int x = 0; x < idx; x++) {
-						  printf("%c", values[numberOfColumns][x]);
+//						  printf("%c", values[numberOfColumns][x]);
 					  }
 					  printf("\n");
 					  numberOfColumns++;
 					  idx=0;
 				  }
 			  }
+//			  for (int x = 0; x < idx; x++) {
+//				  printf("%c", values[numberOfColumns + 1][x]);
+//			  }
+//			  printf("\n");
 
 			  // Trim the value strings and
 			  // populate columnTypes
-			  //
-			  //
 
+			  for (int z=0; z<numberOfColumns + 1; z++) {
+				  int lspace = 0, rspace = 0;
+
+				  for (int s=0; s<10; s++) {
+					  if (strchr(empty, values[z][s])) {
+						  lspace++;
+					  } else {
+						  break;
+					  }
+				  }
+				  for (int rs=99; rs>0; rs--) {
+					  if (strchr(empty, values[z][rs])) {
+						  rspace++;
+					  } else {
+						  break;
+					  }
+				  }
+				  printf("Space left:%i\n" , lspace);
+				  printf("Space right:%i\n" , rspace);
+				  int length = (100 - rspace) - lspace + 1;
+				  if (z == numberOfColumns) {
+					  length-=2; // for the newline
+				  }
+				  char trimmed[length];
+				  int idx = 0;
+				  for (int t = lspace; t < length; t++) {
+					  trimmed[idx] = values[z][t];
+					  idx++;
+				  }
+				  trimmed[idx] = '\0';
+				  printf("Trimmed val: %s\n", trimmed);
+				  printf("Trimmed val length: %i", strlen(trimmed));
+				  printf("\n");
+				  printf("Checking if numeric..\n");
+
+
+				  // check if numeric
+				  int text = 0;
+				  for (int ii = 0; ii < length - 1; ii++) {
+					  if (!isdigit(trimmed[ii])) {
+						  text = 1;
+						  break;
+					  }
+				  }
+				  printf("Text? %i ", text);
+				  columnTypes[z] = text;
+				  printf("\n");
+				  printf("\n");
+			  }
 
 			  // We have all the headings stored in
 			  // char arrays, time to create the table
@@ -123,27 +175,28 @@ int main(void) {
 				  printf("Trimmed heading: %s\n", trimmed);
 				  printf("Trimmed heading length: %i", strlen(trimmed));
 				  printf("\n");
-				  printf("Checking if numeric..\n");
-				  printf("\n\n");
-				  int text = 0;
 
 				  // Test against columnTypes, not headings
-				  for (int ii = 0; ii < strlen(trimmed); ii++) {
-					  if (!isdigit(trimmed[ii])) {
-						  text = 1;
-						  break;
+				  if (z == numberOfColumns) {
+					  if (columnTypes[z] == 0) {
+						  char type[] = " INTEGER)";
+						  strcat(trimmed, type);
+						  strcat(tableCreate, trimmed);
+					  } else {
+						  char type[] = " TEXT)";
+						  strcat(trimmed, type);
+						  strcat(tableCreate, trimmed);
 					  }
-				  }
-				  if (text == 0) {
-					  char type[] = " INTEGER, ";
-					  char col[] = "";
-					  strcat(trimmed, type);
-					  strcat(tableCreate, trimmed);
 				  } else {
-					  char type[] = " TEXT, ";
-					  char col[] = "";
-					  strcat(trimmed, type);
-					  strcat(tableCreate, trimmed);
+					  if (columnTypes[z] == 0) {
+						  char type[] = " INTEGER, ";
+						  strcat(trimmed, type);
+						  strcat(tableCreate, trimmed);
+					  } else {
+						  char type[] = " TEXT, ";
+						  strcat(trimmed, type);
+						  strcat(tableCreate, trimmed);
+					  }
 				  }
 			  }
 			  printf("Table creation string: %s\n", tableCreate);
