@@ -11,11 +11,15 @@
 #include <string>
 
 using namespace std;
-
+#define BUFFER_SIZE 256
+sqlite3 * db;
+char * sErrMsg = 0;
+char * tail = 0;
 int main(void) {
    const char filename[] = "test.csv";
    FILE *file = fopen(filename, "r");
    if (file) {
+
       size_t i;
       char buffer[BUFSIZ];
       char headings[100][100];
@@ -139,7 +143,8 @@ int main(void) {
 			  // example: CREATE TABLE IF NOT EXISTS TTC (id INTEGER PRIMARY KEY,
 			  // l3_sales INTEGER, Branch_Code INTEGER, Store_name TEXT)"
 
-			  char tableCreate[5000] = "CREATE TABLE IF NOT EXISTS DATA (";
+			  char tableCreate[5000] = "CREATE TABLE DATA (";
+//			  char tableCreate[5000] = "CREATE TABLE IF NOT EXISTS DATA (";
 
 			  printf("Headings:\n");
 			  for (int z = 0; z < numberOfColumns + 1; z++) {
@@ -200,6 +205,54 @@ int main(void) {
 				  }
 			  }
 			  printf("Table creation string: %s\n", tableCreate);
+
+		      char sSQL [BUFFER_SIZE] = "\0";
+
+			  char DATABASE[] = "test.sqlite";
+			  char TABLE[] = "CREATE TABLE data (id INTEGER PRIMARY KEY, colname TEXT)";
+//			  char TABLE[] = "CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY, colname TEXT)";
+			  sqlite3_open(DATABASE, &db);
+
+//			  sqlite3_exec(db, TABLE, NULL, NULL, &sErrMsg);
+			  sqlite3_exec(db, tableCreate, NULL, NULL, &sErrMsg);
+			  sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, &sErrMsg);
+			  sqlite3_exec(db, "PRAGMA journal_mode = MEMORY", NULL, NULL, &sErrMsg);
+/*
+//			  cStartClock = clock();
+			  sqlite3_stmt *stmt;                                                                         /* 1 */
+
+/*			  sprintf(sSQL, "INSERT INTO TTC VALUES (NULL, @AB, @CD)");
+//			  sqlite3_prepare_v2(db,  sSQL, 256, &stmt, NULL); //&tail);
+
+			  sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &sErrMsg);
+
+//			  char * sAB = 0;
+//			  char * sCD = 0;
+
+			  char sAB[] = "200";
+			  char sCD[] = "200";
+
+//			  for (int iii=0; iii<numberOfColumns; iii++) {
+				  // Insert field loop
+//				  sqlite3_bind_text(stmt, 1, sAB, -1, SQLITE_TRANSIENT);
+//				  sqlite3_bind_text(stmt, 2, sCD, -1, SQLITE_TRANSIENT);
+//			  }
+			  sqlite3_step(stmt);
+
+			  sqlite3_clear_bindings(stmt);
+			  sqlite3_reset(stmt);
+
+			  // End insert row
+		      sqlite3_exec(db, "END TRANSACTION", NULL, NULL, &sErrMsg);
+
+		//      printf("Imported %d records in %4.2f seconds\n", n, (clock() - cStartClock) / (double)CLOCKS_PER_SEC);
+
+		      sqlite3_finalize(stmt);
+
+*/
+		      sqlite3_close(db);
+
+
 		  } else if (i == 2) {
 			  printf("Row ");
 			  printf("%i: ", i);
@@ -207,6 +260,7 @@ int main(void) {
 			  printf("\n");
 		  }
       }
+
       fclose(file);
       std::cin.get();
    }
