@@ -209,6 +209,7 @@ int main(void) {
 		      char sSQL [BUFFER_SIZE] = "\0";
 
 			  char DATABASE[] = "test.sqlite";
+//			  char TABLE[] = "CREATE TABLE data (id INTEGER PRIMARY KEY, colname TEXT)";
 			  char TABLE[] = "CREATE TABLE data (id INTEGER PRIMARY KEY, colname TEXT)";
 //			  char TABLE[] = "CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY, colname TEXT)";
 			  sqlite3_open(DATABASE, &db);
@@ -217,25 +218,25 @@ int main(void) {
 			  sqlite3_exec(db, tableCreate, NULL, NULL, &sErrMsg);
 			  sqlite3_exec(db, "PRAGMA synchronous = OFF", NULL, NULL, &sErrMsg);
 			  sqlite3_exec(db, "PRAGMA journal_mode = MEMORY", NULL, NULL, &sErrMsg);
-/*
+
 //			  cStartClock = clock();
 			  sqlite3_stmt *stmt;                                                                         /* 1 */
 
-/*			  sprintf(sSQL, "INSERT INTO TTC VALUES (NULL, @AB, @CD)");
-//			  sqlite3_prepare_v2(db,  sSQL, 256, &stmt, NULL); //&tail);
+			  sprintf(sSQL, "INSERT INTO data VALUES (NULL, @AB, @CD)");
+			  sqlite3_prepare_v2(db,  sSQL, 256, &stmt, NULL); //&tail);
 
 			  sqlite3_exec(db, "BEGIN TRANSACTION", NULL, NULL, &sErrMsg);
 
 //			  char * sAB = 0;
 //			  char * sCD = 0;
 
-			  char sAB[] = "200";
-			  char sCD[] = "200";
+			  char * sAB = 0;
+			  char * sCD = 0;
 
 //			  for (int iii=0; iii<numberOfColumns; iii++) {
 				  // Insert field loop
-//				  sqlite3_bind_text(stmt, 1, sAB, -1, SQLITE_TRANSIENT);
-//				  sqlite3_bind_text(stmt, 2, sCD, -1, SQLITE_TRANSIENT);
+				  sqlite3_bind_text(stmt, 1, sAB, -1, SQLITE_TRANSIENT);
+				  sqlite3_bind_text(stmt, 2, sCD, -1, SQLITE_TRANSIENT);
 //			  }
 			  sqlite3_step(stmt);
 
@@ -249,7 +250,7 @@ int main(void) {
 
 		      sqlite3_finalize(stmt);
 
-*/
+
 		      sqlite3_close(db);
 
 
